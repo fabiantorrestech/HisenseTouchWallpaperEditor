@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/gap_panel">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bar_home"
+        android:layout_width="80dp"
+        android:layout_height="44dp"
+        android:maxLines="1"
+        android:text="@string/home"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/bar_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:maxLines="2"
+        android:paddingHorizontal="4dp"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bar_refresh"
+        android:layout_width="80dp"
+        android:layout_height="44dp"
+        android:maxLines="1"
+        android:text="@string/refresh"
+        android:textSize="13sp" />
+</LinearLayout>

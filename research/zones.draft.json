@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "status": "draft: see research/lockscreen-zones.md",
+  "screen": { "width": 720, "height": 1440 },
+  "fontBands": {
+    "top": { "top": 0, "bottom": 360 },
+    "bottom": { "top": 1080, "bottom": 1440 },
+    "sampleStep": 4,
+    "redThreshold": 192
+  },
+  "zones": [
+    { "id": "clock", "label": "Clock", "band": "top", "rect": [60, 164, 347, 264], "evidence": "layout" },
+    { "id": "am_pm", "label": "AM/PM", "band": "top", "rect": [347, 231, 383, 264], "evidence": "layout" },
+    { "id": "date", "label": "Date", "band": "top", "rect": [60, 294, 202, 332], "evidence": "layout" },
+    { "id": "notifications", "label": "Notifications", "band": "top", "rect": [50, 385, 680, 445], "evidence": "layout" },
+    { "id": "quote_full", "label": "Quote (both languages)", "band": "bottom", "rect": [0, 1065, 720, 1289], "evidence": "layout" },
+    { "id": "quote_chinese_most", "label": "Chinese, 99 of 100 quotes", "band": "bottom", "rect": [0, 1198, 720, 1289], "evidence": "measured" },
+    { "id": "quote_chinese_last_line", "label": "Chinese, last line only", "band": "bottom", "rect": [0, 1249, 720, 1289], "evidence": "measured" },
+    { "id": "unlock_hint", "label": "Unlock hint", "band": "bottom", "rect": [0, 1374, 720, 1418], "evidence": "estimate" },
+    { "id": "status_bar", "label": "Status bar", "band": "top", "rect": [0, 0, 720, 48], "evidence": "layout" }
+  ],
+  "unresolved": ["battery_percent", "ringer_icon"]
+}

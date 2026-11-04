@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/bar_top" />
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/no_projects"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/project_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/gap_section"
+        android:paddingTop="@dimen/gap_panel" />
+
+    <LinearLayout
+        android:id="@+id/pager"
+        style="@style/ButtonRow"
+        android:gravity="center_vertical"
+        android:padding="@dimen/gap_panel">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/page_previous"
+            style="@style/RowButton"
+            android:text="@string/previous_page" />
+
+        <TextView
+            android:id="@+id/page_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/page_next"
+            style="@style/RowButton"
+            android:text="@string/next_page" />
+    </LinearLayout>
+</LinearLayout>

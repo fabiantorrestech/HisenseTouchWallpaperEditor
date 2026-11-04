@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "screen": { "width": 720, "height": 1440 },
+  "zones": [
+    { "id": "clock", "label": "Clock", "band": "top", "textColor": true, "readable": true, "rect": [60, 164, 410, 264], "evidence": "Measured at 10:49, widened for wider times" },
+    { "id": "date", "label": "Date", "band": "top", "textColor": true, "readable": true, "rect": [60, 294, 240, 332], "evidence": "Measured at Wed, Nov 4, widened for longer dates" },
+    { "id": "notifications", "label": "Notifications", "band": "top", "textColor": true, "readable": false, "rect": [50, 385, 680, 445], "evidence": "Measured at one row" },
+    {
+      "id": "quote", "label": "Quote", "band": "bottom", "textColor": true, "readable": true, "rect": [0, 1065, 720, 1289], "evidence": "Fixed box, fits every quote",
+      "presets": [
+        { "id": "quote_full", "label": "Both languages", "note": "Fits every quote.", "rect": [0, 1065, 720, 1289] },
+        { "id": "quote_chinese_most", "label": "Mostly Chinese", "note": "Fits the Chinese on 99 of 100 quotes. On many it also covers the last English line.", "rect": [0, 1198, 720, 1289] },
+        { "id": "quote_chinese_last", "label": "Last line only", "note": "Chinese only, but misses the upper lines on longer quotes.", "rect": [0, 1249, 720, 1289] }
+      ]
+    },
+    { "id": "unlock_hint", "label": "Unlock hint", "band": "bottom", "textColor": true, "readable": true, "rect": [145, 1376, 575, 1416], "evidence": "Size from the owner, position estimated" },
+    { "id": "battery", "label": "Battery %", "band": "bottom", "textColor": true, "readable": true, "rect": [20, 1376, 110, 1416], "evidence": "Size from the owner, position estimated" },
+    { "id": "ringer", "label": "Ringer icon", "band": "bottom", "textColor": true, "readable": true, "rect": [670, 1376, 700, 1416], "evidence": "Size from the owner, position estimated" },
+    { "id": "status_bar", "label": "Status bar", "band": "top", "textColor": false, "readable": false, "rect": [0, 0, 720, 48], "evidence": "Window frame; text color rule not verified" },
+    { "id": "charging_text", "label": "Charging message", "band": "bottom", "textColor": false, "readable": false, "rect": [0, 1132, 720, 1170], "evidence": "Measured; text color rule not verified" }
+  ]
+}

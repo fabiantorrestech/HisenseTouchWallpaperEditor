@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Touch Wallpaper</string>
+
+    <!-- Shared -->
+    <string name="home">Home</string>
+    <string name="refresh">Refresh</string>
+    <string name="done">Done</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="save_png">Save PNG</string>
+    <string name="error_title">That didn\'t work</string>
+    <string name="minus">−</string>
+    <string name="plus">+</string>
+    <string name="previous_page">‹ Back</string>
+    <string name="next_page">Next ›</string>
+    <string name="page_of">%1$d of %2$d</string>
+    <string name="type_a_number">%1$s (%2$d to %3$d)</string>
+
+    <!-- Home -->
+    <string name="new_wallpaper">New wallpaper</string>
+    <string name="projects">Projects</string>
+    <string name="restore_original">Restore original wallpaper</string>
+    <string name="settings">Settings</string>
+    <string name="help">Help</string>
+    <string name="restore_title">Restore original wallpaper?</string>
+    <string name="restore_message">This puts back the wallpaper you had before this app first changed it.</string>
+    <string name="restore">Restore</string>
+    <string name="restored">Original wallpaper restored. Lock the device to see it.</string>
+    <string name="status_waiting">Your wallpaper is ready. Lock the device to see it.</string>
+    <string name="status_loaded">Your wallpaper is on the lock screen.</string>
+    <string name="status_replaced">The lock screen wallpaper was changed outside this app.</string>
+    <string name="other_device_warning">This app was measured on the Hisense Touch Lite. On this device, zones may need dragging into place and Apply may not work. You can still save a PNG.</string>
+
+    <!-- Projects -->
+    <string name="no_projects">No projects yet. Tap Home, then New wallpaper.</string>
+    <string name="step_crop">1 Crop</string>
+    <string name="step_zones">2 Zones</string>
+    <string name="duplicate">Duplicate</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="show_saved_file">Show saved file</string>
+    <string name="delete_title">Delete this project?</string>
+    <string name="delete_message">\"%1$s\" and its settings will be removed. Wallpapers you already applied or saved stay.</string>
+    <string name="rename_title">Rename project</string>
+    <string name="name_required">Please enter a name.</string>
+    <string name="file_missing_title">File not found</string>
+    <string name="file_missing_message">The last saved file is no longer here:\n\n%1$s\n\nOpen the project and save it again.</string>
+
+    <!-- Saving -->
+    <string name="name_your_file">Name your file</string>
+    <string name="saved_title">Saved</string>
+    <string name="open_location">Open folder</string>
+    <string name="copy_path">Copy</string>
+    <string name="path_copied">Location copied</string>
+    <string name="saved_location">Saved location</string>
+    <string name="cant_open_location">This device can\'t open that location. Use the path shown to find the file.</string>
+
+    <!-- Crop -->
+    <string name="crop_title">Step 1: Place your image</string>
+    <string name="position">Position</string>
+    <string name="more">More</string>
+    <string name="zoom">Zoom</string>
+    <string name="percent">%1$d%%</string>
+    <string name="move_step">Move %1$d</string>
+    <string name="nudge_left">←</string>
+    <string name="nudge_up">↑</string>
+    <string name="nudge_down">↓</string>
+    <string name="nudge_right">→</string>
+    <string name="rotate">Rotate</string>
+    <string name="reset_crop">Reset</string>
+    <string name="change_image">Change image</string>
+    <string name="next">Next</string>
+    <string name="show_zones">Show where lock screen items go</string>
+    <string name="background_gray">Behind image (0 black, 15 white)</string>
+
+    <!-- Zone editor -->
+    <string name="zones_title">Step 2: Make it readable</string>
+    <string name="zones">Zones</string>
+    <string name="make_readable">Make readable</string>
+    <string name="back_to_crop">Crop</string>
+    <string name="full_view">Full view</string>
+    <string name="back">Back</string>
+    <string name="next_quote">Next quote</string>
+    <string name="apply">Apply</string>
+    <string name="applying">Applying…</string>
+    <string name="preview_predicted">Text: Predicted</string>
+    <string name="preview_white">Text: White</string>
+    <string name="preview_black">Text: Black</string>
+    <string name="preview_none">Text: Hidden</string>
+    <string name="all_on">All on</string>
+    <string name="all_off">All off</string>
+    <string name="edit">Edit</string>
+    <string name="tab_style">Style</string>
+    <string name="tab_size">Size</string>
+    <string name="tab_text">Text</string>
+    <string name="mode_outline">Outline</string>
+    <string name="mode_fill">Fill</string>
+    <string name="mode_both">Both</string>
+    <string name="black">Black</string>
+    <string name="white">White</string>
+    <string name="fill_gray">Fill (0 black, 15 white)</string>
+    <string name="opacity">Opacity</string>
+    <string name="outline_gray">Outline (0 black, 15 white)</string>
+    <string name="outline_width">Outline thickness</string>
+    <string name="corners">Corner roundness</string>
+    <string name="padding">Extra space</string>
+    <string name="soft_edge">Soft edge</string>
+    <string name="move_or_resize">Move or resize</string>
+    <string name="drag_hint">Drag the box to move it, or its edges to resize it.</string>
+    <string name="reset_zone">Reset zone</string>
+    <string name="choice_auto">Automatic</string>
+    <string name="text_shared_with">Also changes: %1$s.</string>
+    <string name="text_not_shared">Only this item uses this setting.</string>
+    <string name="text_color_now">Right now: %1$s text.</string>
+
+    <!-- Plain advice -->
+    <string name="band_top_items">Clock, date and notifications</string>
+    <string name="band_bottom_items">Quote, hint, battery and ringer</string>
+    <string name="advice_band">%1$s: %2$s text.</string>
+    <string name="advice_contrast_dark">%1$s: white text on this light panel will be hard to read. Try a darker panel.</string>
+    <string name="advice_contrast_light">%1$s: black text on this dark panel will be hard to read. Try a lighter panel.</string>
+    <string name="advice_flipped">%1$s changed from %2$s to %3$s text.</string>
+    <string name="advice_no_panel">%1$s: forced %2$s text has no panel behind it, so it may be hard to read. Turn on a zone here.</string>
+    <string name="advice_votes">Top vote %1$+d, bottom vote %2$+d.</string>
+
+    <!-- Apply -->
+    <string name="permission_title">One permission needed</string>
+    <string name="permission_message">The lock screen reads its wallpaper from a system folder. To replace it, this app needs All Files Access. Turn it on for Touch Wallpaper on the next screen, then come back and tap Apply again.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="applied_title">Wallpaper applied</string>
+    <string name="applied_message">Lock the device to see it. A copy was also saved here:</string>
+    <string name="applied_no_copy">Lock the device to see it. The extra copy couldn\'t be saved: %1$s</string>
+
+    <!-- Settings -->
+    <string name="eink_section">E-ink</string>
+    <string name="eink_look">E-ink look (black and white, no ripples)</string>
+    <string name="no_animations">No screen animations</string>
+    <string name="refresh_on_switch">Refresh the screen between preview and edit</string>
+    <string name="restart_note">The look changes on the next screen you open.</string>
+    <string name="export_section">Saving</string>
+    <string name="ask_each_time">Ask where to save each time</string>
+    <string name="export_folder_now">Saves to: %1$s</string>
+    <string name="default_export_folder">Internal storage/Pictures/TouchWallpaper</string>
+    <string name="choose_folder">Choose folder</string>
+    <string name="use_default_folder">Use default</string>
+    <string name="backup_section">Backup</string>
+    <string name="back_up_projects">Back up projects</string>
+    <string name="restore_projects">Restore projects</string>
+    <string name="backed_up">Saved %1$d projects.</string>
+    <string name="restored_projects">Restored %1$d projects. Projects already on this device were left as they are.</string>
+    <string name="technical_details">Show technical details</string>
+
+    <!-- Welcome -->
+    <string name="welcome_1_title">1. Pick an image</string>
+    <string name="welcome_1_body">Start a new wallpaper and choose any picture on your device.</string>
+    <string name="welcome_2_title">2. Place it</string>
+    <string name="welcome_2_body">Drag and pinch, or use the + and − buttons for exact control. The boxes show where the clock, quote and other items will sit.</string>
+    <string name="welcome_3_title">3. Make text readable</string>
+    <string name="welcome_3_body">Tap Make readable for an instant result, or tap any item to style it yourself. Then tap Apply and lock your device to see it.</string>
+    <string name="get_started">Get started</string>
+</resources>

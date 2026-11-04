@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/welcome_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/welcome_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        style="@style/ButtonRow">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/welcome_back"
+            style="@style/RowButton"
+            android:layout_height="56dp"
+            android:text="@string/previous_page" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/welcome_next"
+            style="@style/RowButton"
+            android:layout_height="56dp"
+            android:text="@string/next_page" />
+    </LinearLayout>
+</LinearLayout>

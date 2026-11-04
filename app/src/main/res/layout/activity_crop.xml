@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/bar_top" />
+
+    <io.github.fabiantorrestech.touchwallpaper.ui.CropCanvasView
+        android:id="@+id/canvas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/gap_panel">
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tab_position"
+                style="@style/RowButton"
+                android:text="@string/position" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tab_more"
+                style="@style/RowButton"
+                android:text="@string/more" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/page_position"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/zoom_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout style="@style/ButtonRow">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nudge_left"
+                        style="@style/RowButton"
+                        android:text="@string/nudge_left" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nudge_up"
+                        style="@style/RowButton"
+                        android:text="@string/nudge_up" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nudge_down"
+                        style="@style/RowButton"
+                        android:text="@string/nudge_down" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nudge_right"
+                        style="@style/RowButton"
+                        android:text="@string/nudge_right" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nudge_step"
+                        style="@style/RowButton"
+                        android:layout_weight="1.6"
+                        android:maxLines="1"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/page_more"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:id="@+id/background_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout style="@style/ButtonRow">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/rotate"
+                        style="@style/RowButton"
+                        android:text="@string/rotate" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/reset"
+                        style="@style/RowButton"
+                        android:text="@string/reset_crop" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/change_image"
+                        style="@style/RowButton"
+                        android:layout_weight="1.4"
+                        android:text="@string/change_image"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/show_zones"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/show_zones"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/undo"
+                style="@style/RowButton"
+                android:text="@string/undo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/redo"
+                style="@style/RowButton"
+                android:text="@string/redo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save_png"
+                style="@style/RowButton"
+                android:layout_weight="1.6"
+                android:maxLines="1"
+                android:text="@string/save_png" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/next"
+                style="@style/RowButton"
+                android:text="@string/next" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

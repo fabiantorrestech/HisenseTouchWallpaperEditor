@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/bar_top" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp">
+
+        <TextView
+            style="@style/SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/eink_section" />
+
+        <CheckBox
+            android:id="@+id/eink_look"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/eink_look" />
+
+        <CheckBox
+            android:id="@+id/no_animations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_animations" />
+
+        <CheckBox
+            android:id="@+id/refresh_on_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/refresh_on_switch" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/restart_note"
+            android:textSize="13sp" />
+
+        <TextView
+            style="@style/SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/export_section" />
+
+        <TextView
+            android:id="@+id/export_folder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/choose_folder"
+                style="@style/RowButton"
+                android:text="@string/choose_folder" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/use_default_folder"
+                style="@style/RowButton"
+                android:text="@string/use_default_folder" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/ask_each_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ask_each_time" />
+
+        <TextView
+            style="@style/SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/backup_section" />
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/back_up"
+                style="@style/RowButton"
+                android:text="@string/back_up_projects" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/restore_projects"
+                style="@style/RowButton"
+                android:text="@string/restore_projects" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/technical_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/technical_details" />
+    </LinearLayout>
+</LinearLayout>

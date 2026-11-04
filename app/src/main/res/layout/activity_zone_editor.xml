@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/bar_top" />
+
+    <io.github.fabiantorrestech.touchwallpaper.ui.ZoneCanvasView
+        android:id="@+id/canvas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.85" />
+
+    <!-- Preview: what the wallpaper looks like, and what to do next. -->
+    <LinearLayout
+        android:id="@+id/panel_preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/gap_panel">
+
+        <TextView
+            android:id="@+id/advice_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/gap_button"
+            android:paddingHorizontal="@dimen/gap_button"
+            android:maxLines="4"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_zones"
+                style="@style/RowButton"
+                android:text="@string/zones" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/make_readable"
+                style="@style/RowButton"
+                android:layout_weight="1.5"
+                android:text="@string/make_readable" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/back_to_crop"
+                style="@style/RowButton"
+                android:text="@string/back_to_crop" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/undo"
+                style="@style/RowButton"
+                android:text="@string/undo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/redo"
+                style="@style/RowButton"
+                android:text="@string/redo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/full_view"
+                style="@style/RowButton"
+                android:text="@string/full_view" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save_png"
+                style="@style/RowButton"
+                android:text="@string/save_png" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/apply"
+                style="@style/RowButton"
+                android:text="@string/apply" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Full view: the largest preview, plus the demo text options. -->
+    <LinearLayout
+        android:id="@+id/panel_full"
+        style="@style/ButtonRow"
+        android:padding="@dimen/gap_panel"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/preview_text"
+            style="@style/RowButton"
+            android:layout_weight="1.4"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next_quote"
+            style="@style/RowButton"
+            android:text="@string/next_quote"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/full_back"
+            style="@style/RowButton"
+            android:text="@string/back" />
+    </LinearLayout>
+
+    <!-- Moving or resizing a zone: the largest preview, plus a way back. -->
+    <LinearLayout
+        android:id="@+id/panel_resize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/gap_panel"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/drag_hint"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/resize_done"
+            android:layout_width="88dp"
+            android:layout_height="48dp"
+            android:text="@string/done" />
+    </LinearLayout>
+
+    <!-- Zones list: turn zones on or off, or open one to edit. -->
+    <LinearLayout
+        android:id="@+id/panel_zones"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.15"
+        android:orientation="vertical"
+        android:padding="@dimen/gap_panel"
+        android:visibility="gone">
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/all_on"
+                style="@style/RowButton"
+                android:text="@string/all_on" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/all_off"
+                style="@style/RowButton"
+                android:text="@string/all_off" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/zones_done"
+                style="@style/RowButton"
+                android:text="@string/done" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/zone_rows"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            style="@style/ButtonRow"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/zones_previous"
+                style="@style/RowButton"
+                android:text="@string/previous_page" />
+
+            <TextView
+                android:id="@+id/zones_page"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/zones_next"
+                style="@style/RowButton"
+                android:text="@string/next_page" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Edit zone: only the settings that apply to the chosen zone. -->
+    <LinearLayout
+        android:id="@+id/panel_edit"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.15"
+        android:orientation="vertical"
+        android:padding="@dimen/gap_panel"
+        android:visibility="gone">
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <CheckBox
+                android:id="@+id/edit_enabled"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1.9"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_undo"
+                style="@style/RowButton"
+                android:text="@string/undo"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_redo"
+                style="@style/RowButton"
+                android:text="@string/redo"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_done"
+                style="@style/RowButton"
+                android:text="@string/done"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tab_style"
+                style="@style/RowButton"
+                android:text="@string/tab_style" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tab_size"
+                style="@style/RowButton"
+                android:text="@string/tab_size" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tab_text"
+                style="@style/RowButton"
+                android:text="@string/tab_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_previous"
+                style="@style/RowButton"
+                android:layout_weight="0.7"
+                android:text="‹" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_next"
+                style="@style/RowButton"
+                android:layout_weight="0.7"
+                android:text="›" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/advice_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_button"
+            android:paddingHorizontal="@dimen/gap_button"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/edit_page"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/gap_button"
+            android:layout_weight="1"
+            android:orientation="vertical" />
+    </LinearLayout>
+</LinearLayout>

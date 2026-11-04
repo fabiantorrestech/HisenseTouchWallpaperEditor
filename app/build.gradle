@@ -1,0 +1,40 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "io.github.fabiantorrestech.touchwallpaper"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "io.github.fabiantorrestech.touchwallpaper"
+        minSdk 30
+        // Stays at 30: this app targets one Android 11 device and writes the ROM's wallpaper file (ADR 4).
+        targetSdk 30
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt")
+        }
+    }
+
+    lint {
+        // A Google Play rule. This app is sideloaded and its target stays at 30 (ADR 4).
+        disable "ExpiredTargetSdkVersion"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.12.0"
+}

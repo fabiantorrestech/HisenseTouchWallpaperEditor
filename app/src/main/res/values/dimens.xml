@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- One spacing scale, so every screen has the same breathing room. -->
+    <dimen name="gap_button">4dp</dimen>
+    <dimen name="gap_panel">8dp</dimen>
+    <dimen name="gap_section">12dp</dimen>
+</resources>
