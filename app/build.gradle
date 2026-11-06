@@ -11,15 +11,24 @@ android {
         minSdk 30
         // Stays at 30: this app targets one Android 11 device and writes the ROM's wallpaper file (ADR 4).
         targetSdk 30
-        versionCode 1
+        // Commit count: grows with every commit, so an update never looks like a downgrade (ADR 3 in android-apps).
+        versionCode providers.exec { commandLine "git", "rev-list", "--count", "HEAD" }
+            .standardOutput.asText.get().trim().toInteger()
         versionName "1.0"
     }
 
     buildTypes {
+        debug {
+            // A separate app next to the released one (ADR 7 in android-apps).
+            applicationIdSuffix ".debug"
+        }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt")
+            // Sideloaded only: the shared debug key (DEBUG_SHARED in android-apps) keeps updates
+            // installing over the debug builds already on the device.
+            signingConfig signingConfigs.debug
         }
     }
 

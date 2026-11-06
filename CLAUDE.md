@@ -6,12 +6,12 @@ Android app that builds lock screen wallpapers: Step 1 crops an image, Step 2 ad
 
 - `HITV205N` (Hisense Touch Lite), Android 11 / API 30, non-root, arm64
 - 720×1440, 320 dpi, e-ink
-- This app targets this one device. Debug-signed, sideloaded over USB.
+- This app targets this one device. Sideloaded. Release and debug builds are both signed with the shared debug key (`DEBUG_SHARED`, android-apps ADR 6); the debug build is a separate app, `io.github.fabiantorrestech.touchwallpaper.debug` (android-apps ADR 7).
 
 ## Build
 
 - Run from native Windows. SDK: `%LOCALAPPDATA%\Android\Sdk`. JDK: Android Studio's `jbr`.
-- `./gradlew assembleDebug`, then `adb install -r app/build/outputs/apk/debug/app-debug.apk`
+- `./gradlew assembleDebug`, then `adb install -r app/build/outputs/apk/debug/app-debug.apk` (installs the `.debug` app). The release build is published to the app hub with `android-apps/scripts/publish-local.ps1 -App touchwallpaper`.
 
 ## Where things live
 
