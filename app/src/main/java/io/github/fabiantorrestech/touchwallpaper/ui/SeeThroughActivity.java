@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
@@ -36,8 +38,10 @@ import java.util.function.Consumer;
 import org.json.JSONException;
 
 /**
- * See-through lock settings. Two pages instead of scrolling: Setup (switch, permissions, style and
- * fallback pickers) and Hidden apps (a paged checklist with sensitive apps suggested first).
+ * See-through lock options, opened from Settings. The see-through wallpaper itself is a project
+ * (Home > New wallpaper > See-through), applied from the editor. Two pages instead of scrolling:
+ * Setup (switch, permissions, hidden-app wallpaper) and Hidden apps (a paged checklist with
+ * sensitive apps suggested first).
  */
 public final class SeeThroughActivity extends BaseActivity {
     private static final int APPS_PER_PAGE = 8;
@@ -56,7 +60,6 @@ public final class SeeThroughActivity extends BaseActivity {
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final Runnable commitStyle = this::commitStyle;
     private final Runnable commitFallback = this::commitFallback;
 
     private DeviceProfile profile;
@@ -65,10 +68,12 @@ public final class SeeThroughActivity extends BaseActivity {
     private CheckBox enabledBox;
     private boolean binding;
 
-    private final List<Choice> styleChoices = new ArrayList<>();
+    private final ActivityResultLauncher<String[]> fallbackImagePicker =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), this::onFallbackImagePicked);
     private final List<Choice> fallbackChoices = new ArrayList<>();
-    private int styleIndex;
     private int fallbackIndex;
+    /** The see-through project last applied, or null if it's gone. */
+    private Project styleProject;
 
     private List<InstalledApps.App> apps;
     private Set<String> hiddenApps;
@@ -101,10 +106,9 @@ public final class SeeThroughActivity extends BaseActivity {
         allFiles.setOnClickListener(view -> startActivity(new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
                 Uri.parse("package:" + getPackageName()))));
 
-        findViewById(R.id.style_previous).setOnClickListener(view -> stepStyle(-1));
-        findViewById(R.id.style_next).setOnClickListener(view -> stepStyle(1));
         findViewById(R.id.fallback_previous).setOnClickListener(view -> stepFallback(-1));
         findViewById(R.id.fallback_next).setOnClickListener(view -> stepFallback(1));
+        findViewById(R.id.fallback_pick_image).setOnClickListener(view -> fallbackImagePicker.launch(new String[]{"image/*"}));
 
         bindCheck(R.id.see_through_on_screen_off, settings.seeThroughOnScreenOff(), settings::setSeeThroughOnScreenOff);
         boolean debuggable = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
@@ -131,10 +135,6 @@ public final class SeeThroughActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         // Save a choice still waiting for its delay rather than lose it.
-        if (handler.hasCallbacks(commitStyle)) {
-            handler.removeCallbacks(commitStyle);
-            commitStyle();
-        }
         if (handler.hasCallbacks(commitFallback)) {
             handler.removeCallbacks(commitFallback);
             commitFallback();
@@ -192,11 +192,22 @@ public final class SeeThroughActivity extends BaseActivity {
                     .show();
             return;
         }
+        if (on && styleProject == null) {
+            binding = true;
+            enabledBox.setChecked(false);
+            binding = false;
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.see_through_needs_project)
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
+            return;
+        }
+        String styleId = on ? styleProject.id : null;
         enabledBox.setEnabled(false);
         Background.run(() -> {
             try {
                 if (on) {
-                    SeeThrough.turnOn(this, settings);
+                    SeeThrough.turnOn(this, settings, styleId);
                     runOnUiThread(this::onTurnedOn);
                 } else {
                     boolean restored = SeeThrough.turnOff(this, settings);
@@ -248,25 +259,31 @@ public final class SeeThroughActivity extends BaseActivity {
     }
 
     private void showChoices(List<Project> projects) {
-        styleChoices.clear();
-        styleChoices.add(new Choice(null, getString(R.string.see_through_style_none)));
-        if (profile.hasMeasuredZones()) {
-            for (Project project : projects) {
-                styleChoices.add(new Choice(project.id, project.name));
+        styleProject = null;
+        String styleId = settings.seeThroughStyleProjectId();
+        for (Project project : projects) {
+            if (project.isSeeThrough() && project.id.equals(styleId)) {
+                styleProject = project;
             }
         }
-        styleIndex = indexOf(styleChoices, settings.seeThroughStyleProjectId());
+        ((TextView) findViewById(R.id.style_name)).setText(styleProject != null
+                ? getString(R.string.see_through_using, styleProject.name)
+                : getString(R.string.see_through_needs_project));
 
         fallbackChoices.clear();
-        fallbackChoices.add(new Choice(FallbackWallpaper.NONE, getString(R.string.see_through_fallback_none)));
-        if (fallback.hasBefore()) {
-            fallbackChoices.add(new Choice(FallbackWallpaper.BEFORE, getString(R.string.see_through_fallback_before)));
+        fallbackChoices.add(new Choice(null, getString(R.string.see_through_fallback_auto)));
+        if (fallback.hasOriginal()) {
+            fallbackChoices.add(new Choice(FallbackWallpaper.ORIGINAL, getString(R.string.see_through_fallback_original)));
         }
         for (Project project : projects) {
-            fallbackChoices.add(new Choice(project.id, project.name));
+            if (!project.isSeeThrough()) {
+                fallbackChoices.add(new Choice(project.id, project.name));
+            }
+        }
+        if (FallbackWallpaper.IMAGE.equals(settings.seeThroughFallbackId())) {
+            fallbackChoices.add(new Choice(FallbackWallpaper.IMAGE, getString(R.string.see_through_fallback_image)));
         }
         fallbackIndex = indexOf(fallbackChoices, settings.seeThroughFallbackId());
-        showStyle();
         showFallback();
     }
 
@@ -279,31 +296,11 @@ public final class SeeThroughActivity extends BaseActivity {
         return 0;
     }
 
-    private void showStyle() {
-        boolean canChoose = styleChoices.size() > 1;
-        findViewById(R.id.style_previous).setEnabled(canChoose);
-        findViewById(R.id.style_next).setEnabled(canChoose);
-        TextView name = findViewById(R.id.style_name);
-        name.setText(profile.hasMeasuredZones()
-                ? styleChoices.get(styleIndex).label
-                : getString(R.string.see_through_style_unmeasured));
-    }
-
     private void showFallback() {
         boolean canChoose = fallbackChoices.size() > 1;
         findViewById(R.id.fallback_previous).setEnabled(canChoose);
         findViewById(R.id.fallback_next).setEnabled(canChoose);
         ((TextView) findViewById(R.id.fallback_name)).setText(fallbackChoices.get(fallbackIndex).label);
-    }
-
-    private void stepStyle(int delta) {
-        if (styleChoices.isEmpty()) {
-            return;
-        }
-        styleIndex = Math.floorMod(styleIndex + delta, styleChoices.size());
-        showStyle();
-        handler.removeCallbacks(commitStyle);
-        handler.postDelayed(commitStyle, COMMIT_DELAY_MILLIS);
     }
 
     private void stepFallback(int delta) {
@@ -316,28 +313,37 @@ public final class SeeThroughActivity extends BaseActivity {
         handler.postDelayed(commitFallback, COMMIT_DELAY_MILLIS);
     }
 
-    private void commitStyle() {
-        if (styleIndex < styleChoices.size()) {
-            settings.setSeeThroughStyleProjectId(styleChoices.get(styleIndex).id);
-        }
-    }
-
-    /** Renders the chosen project once, so the service only ever copies a finished PNG. */
+    /** A project is rendered once when chosen, so the service only ever copies a finished PNG. */
     private void commitFallback() {
         if (fallbackIndex >= fallbackChoices.size()) {
             return;
         }
         String id = fallbackChoices.get(fallbackIndex).id;
+        if (id == null || FallbackWallpaper.ORIGINAL.equals(id) || FallbackWallpaper.IMAGE.equals(id)) {
+            // Automatic and Original are read when needed; a picked image is already saved.
+            settings.setSeeThroughFallbackId(id);
+            return;
+        }
         Background.run(() -> {
             try {
-                if (FallbackWallpaper.NONE.equals(id)) {
-                    fallback.clear();
-                } else if (FallbackWallpaper.BEFORE.equals(id)) {
-                    fallback.useBefore();
-                } else {
-                    fallback.save(FallbackWallpaper.renderProject(this, id));
-                }
+                fallback.saveChosen(FallbackWallpaper.renderProject(this, id));
                 settings.setSeeThroughFallbackId(id);
+            } catch (IOException | JSONException | RuntimeException e) {
+                runOnUiThread(() -> showError(e));
+            }
+        });
+    }
+
+    private void onFallbackImagePicked(Uri image) {
+        if (image == null) {
+            return;
+        }
+        handler.removeCallbacks(commitFallback);
+        Background.run(() -> {
+            try {
+                fallback.saveChosen(FallbackWallpaper.renderImage(this, image));
+                settings.setSeeThroughFallbackId(FallbackWallpaper.IMAGE);
+                runOnUiThread(this::loadChoices);
             } catch (IOException | JSONException | RuntimeException e) {
                 runOnUiThread(() -> showError(e));
             }

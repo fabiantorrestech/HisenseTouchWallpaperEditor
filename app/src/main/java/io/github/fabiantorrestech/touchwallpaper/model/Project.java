@@ -7,9 +7,10 @@ import java.util.Map;
 /** One editable wallpaper: the source image plus the settings from both steps. */
 public final class Project {
     public String id;
+    public ProjectKind kind = ProjectKind.IMAGE;
     public String name;
     public long updatedAtMillis;
-    /** File name of the private source image copy inside the project's folder. */
+    /** File name of the private source image copy inside the project's folder. For see-through, the preview image. */
     public String sourceFileName;
 
     public CropState crop = new CropState();
@@ -25,6 +26,10 @@ public final class Project {
         for (Band band : Band.values()) {
             textColorChoices.put(band, TextColorChoice.AUTO);
         }
+    }
+
+    public boolean isSeeThrough() {
+        return kind == ProjectKind.SEE_THROUGH;
     }
 
     /** Returns the zone's style, creating the default the first time it's requested. */

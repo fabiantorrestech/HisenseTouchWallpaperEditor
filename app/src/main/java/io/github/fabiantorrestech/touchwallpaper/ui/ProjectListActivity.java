@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import io.github.fabiantorrestech.touchwallpaper.R;
 import io.github.fabiantorrestech.touchwallpaper.export.ImageSaver;
 import io.github.fabiantorrestech.touchwallpaper.model.Project;
+import io.github.fabiantorrestech.touchwallpaper.seethrough.SeeThrough;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectStore;
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +75,9 @@ public final class ProjectListActivity extends BaseActivity {
 
     private View createRow(LayoutInflater inflater, Project project) {
         View row = inflater.inflate(R.layout.row_project, list, false);
-        ((TextView) row.findViewById(R.id.name)).setText(project.name);
+        ((TextView) row.findViewById(R.id.name)).setText(project.isSeeThrough()
+                ? getString(R.string.see_through_project_name, project.name)
+                : project.name);
         File thumbnail = store.thumbnailOf(project.id);
         if (thumbnail.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -82,7 +85,10 @@ public final class ProjectListActivity extends BaseActivity {
             ((ImageView) row.findViewById(R.id.thumbnail))
                     .setImageBitmap(BitmapFactory.decodeFile(thumbnail.getPath(), options));
         }
-        row.findViewById(R.id.open_crop).setOnClickListener(view -> open(CropActivity.class, project.id));
+        View openCrop = row.findViewById(R.id.open_crop);
+        // A see-through wallpaper has nothing to crop: the screenshot always fills the screen.
+        openCrop.setVisibility(project.isSeeThrough() ? View.INVISIBLE : View.VISIBLE);
+        openCrop.setOnClickListener(view -> open(CropActivity.class, project.id));
         row.findViewById(R.id.open_zones).setOnClickListener(view -> open(ZoneEditorActivity.class, project.id));
         row.findViewById(R.id.rename).setOnClickListener(view -> askToRename(project));
         row.findViewById(R.id.duplicate).setOnClickListener(view -> duplicate(project));
@@ -137,11 +143,25 @@ public final class ProjectListActivity extends BaseActivity {
                 .setTitle(R.string.delete_title)
                 .setMessage(getString(R.string.delete_message, project.name))
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.delete, (dialog, which) -> {
-                    store.delete(project.id);
-                    reload();
-                })
+                .setPositiveButton(R.string.delete, (dialog, which) -> delete(project))
                 .show();
+    }
+
+    /** Deleting the see-through wallpaper in use turns see-through off and puts the fallback back. */
+    private void delete(Project project) {
+        boolean inUse = settings.seeThroughEnabled() && project.id.equals(settings.seeThroughStyleProjectId());
+        store.delete(project.id);
+        reload();
+        if (!inUse) {
+            return;
+        }
+        Background.run(() -> {
+            try {
+                SeeThrough.turnOff(this, settings);
+            } catch (IOException | RuntimeException e) {
+                runOnUiThread(() -> showError(e));
+            }
+        });
     }
 
     private void showSavedFile(Project project) {

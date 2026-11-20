@@ -47,6 +47,22 @@ public final class ReadableDesigner {
         }
     }
 
+    /**
+     * "Make readable" for a see-through wallpaper, whose background is unknown until the device
+     * locks: white panels and forced black text on both bands, so the text reads the same over any
+     * screen. Forcing changes only sampled pixels of each screenshot (TextColorForcer).
+     */
+    public static void applyForAnyBackground(Project project, List<ZoneDefinition> zones) {
+        for (ZoneDefinition zone : zones) {
+            if (zone.includedInMakeReadable) {
+                addPanel(project.styleFor(zone.id), TextColor.BLACK);
+            }
+        }
+        for (Band band : Band.values()) {
+            project.textColorChoices.put(band, TextColorChoice.FORCE_BLACK);
+        }
+    }
+
     private static void addPanel(ZoneStyle style, TextColor textColor) {
         style.enabled = true;
         style.mode = ZoneMode.FILL;

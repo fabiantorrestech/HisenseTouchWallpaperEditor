@@ -91,6 +91,19 @@
                 android:text="@string/restore_projects" />
         </LinearLayout>
 
+        <TextView
+            style="@style/SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/see_through" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/see_through_options"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="@dimen/gap_button"
+            android:text="@string/see_through_options" />
+
         <CheckBox
             android:id="@+id/technical_details"
             android:layout_width="match_parent"

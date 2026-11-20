@@ -34,9 +34,8 @@ public final class HomeActivity extends BaseActivity {
         exporter = new WallpaperExporter(this);
         status = findViewById(R.id.status);
         restoreButton = findViewById(R.id.restore_original);
-        findViewById(R.id.new_wallpaper).setOnClickListener(view -> imagePicker.launch(new String[]{"image/*"}));
+        findViewById(R.id.new_wallpaper).setOnClickListener(view -> chooseWallpaperType());
         findViewById(R.id.projects).setOnClickListener(view -> startActivity(new Intent(this, ProjectListActivity.class)));
-        findViewById(R.id.see_through).setOnClickListener(view -> startActivity(new Intent(this, SeeThroughActivity.class)));
         findViewById(R.id.settings).setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
         findViewById(R.id.help).setOnClickListener(view -> startActivity(new Intent(this, WelcomeActivity.class)));
         restoreButton.setOnClickListener(view -> confirmRestore());
@@ -83,6 +82,35 @@ public final class HomeActivity extends BaseActivity {
         status.setVisibility(View.VISIBLE);
     }
 
+    /** A picture goes through Step 1; see-through has nothing to crop, so it opens Step 2 directly. */
+    private void chooseWallpaperType() {
+        String[] types = {getString(R.string.new_from_picture), getString(R.string.new_see_through)};
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.new_wallpaper)
+                .setItems(types, (dialog, which) -> {
+                    if (which == 0) {
+                        imagePicker.launch(new String[]{"image/*"});
+                    } else {
+                        createSeeThroughProject();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void createSeeThroughProject() {
+        ProjectStore store = new ProjectStore(this);
+        String name = getString(R.string.see_through);
+        Background.run(() -> {
+            try {
+                Project project = store.createSeeThrough(name);
+                runOnUiThread(() -> startActivity(new Intent(this, ZoneEditorActivity.class).putExtra(Extras.PROJECT_ID, project.id)));
+            } catch (IOException | JSONException | RuntimeException e) {
+                runOnUiThread(() -> showError(e));
+            }
+        });
+    }
+
     private void createProject(Uri uri) {
         if (uri == null) {
             return;
@@ -110,6 +138,8 @@ public final class HomeActivity extends BaseActivity {
     private void restore() {
         Background.run(() -> {
             try {
+                // A restored picture would be replaced by the next screenshot.
+                settings.setSeeThroughEnabled(false);
                 exporter.restoreOriginal();
                 runOnUiThread(() -> {
                     updateStatus();

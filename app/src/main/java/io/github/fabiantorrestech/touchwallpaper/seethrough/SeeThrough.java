@@ -34,10 +34,11 @@ public final class SeeThrough {
     }
 
     /**
-     * Turns see-through on. The first time on a device with a ROM wallpaper file, keeps the current
-     * wallpaper as "before see-through" and makes it the fallback. Blocks; call off the UI thread.
+     * Makes a see-through project the lock screen and turns see-through on. The first time on a
+     * device with a ROM wallpaper file, keeps the current wallpaper for the fallback. Blocks; call
+     * off the UI thread.
      */
-    public static void turnOn(Context context, AppSettings settings) throws IOException {
+    public static void turnOn(Context context, AppSettings settings, String styleProjectId) throws IOException {
         DeviceProfile profile = DeviceProfiles.detect(context);
         FallbackWallpaper fallback = new FallbackWallpaper(context);
         if (profile.kind == DeviceProfile.Kind.HISENSE_TOUCH_LITE && !fallback.hasBefore()) {
@@ -46,21 +47,20 @@ public final class SeeThrough {
                 fallback.saveBefore(current);
             }
         }
-        if (settings.seeThroughFallbackId() == null && fallback.hasBefore()) {
-            fallback.useBefore();
-            settings.setSeeThroughFallbackId(FallbackWallpaper.BEFORE);
-        }
+        settings.setSeeThroughStyleProjectId(styleProjectId);
+        // Makes the service reload the project even when it's the same one, after edits.
+        settings.touchSeeThroughStyle();
         settings.setSeeThroughEnabled(true);
     }
 
     /**
      * Turns see-through off and puts the fallback wallpaper back, so the lock screen stops showing
-     * the last screenshot. Returns false if there was no fallback to put back. Blocks.
+     * the last screenshot. Returns false if there was nothing to put back. Blocks.
      */
     public static boolean turnOff(Context context, AppSettings settings) throws IOException {
         settings.setSeeThroughEnabled(false);
-        FallbackWallpaper fallback = new FallbackWallpaper(context);
-        if (!fallback.exists()) {
+        byte[] png = new FallbackWallpaper(context).resolve(settings.seeThroughFallbackId());
+        if (png == null) {
             return false;
         }
         LockScreenTarget target = DeviceProfiles.detect(context).createTarget(context);
@@ -68,7 +68,7 @@ public final class SeeThrough {
         if (problem != null) {
             throw new IOException(problem);
         }
-        target.applyPng(fallback.read());
+        target.applyPng(png);
         return true;
     }
 }

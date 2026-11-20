@@ -283,7 +283,7 @@ public final class SeeThroughService extends AccessibilityService
         capturer.capture(new ScreenCapturer.Callback() {
             @Override
             public void onCaptured(Bitmap frame) {
-                handleFrame(frame, requestedAt, urgent);
+                handleFrame(frame, app, requestedAt, urgent);
                 finishCapture(false);
             }
 
@@ -304,7 +304,7 @@ public final class SeeThroughService extends AccessibilityService
         }
     }
 
-    private void handleFrame(Bitmap frame, long requestedAt, boolean urgent) {
+    private void handleFrame(Bitmap frame, String app, long requestedAt, boolean urgent) {
         try {
             long captured = SystemClock.uptimeMillis();
             if (frame.getWidth() > frame.getHeight()) {
@@ -313,9 +313,16 @@ public final class SeeThroughService extends AccessibilityService
             }
             int darkPercent = scanFrame(frame);
             long hash = frameHash;
-            if (urgent && darkPercent >= BLACK_FRAME_PERCENT) {
-                // The display was already off: writing this would put a black lock screen up.
-                Log.i(TAG, "skipped: black frame after screen off");
+            if (darkPercent >= BLACK_FRAME_PERCENT) {
+                if (urgent) {
+                    // The display was already off: writing this would put a black lock screen up.
+                    Log.i(TAG, "skipped: black frame after screen off");
+                } else {
+                    // Some apps, such as KOReader on this device, come back black: their screen
+                    // isn't visible to Android screenshots. Treat them like a hidden app.
+                    Log.i(TAG, "black frame from " + app);
+                    showFallbackOnce(app);
+                }
                 return;
             }
             if (hash == lastFrameHash && !showingFallback) {
@@ -395,14 +402,16 @@ public final class SeeThroughService extends AccessibilityService
         if (showingFallback) {
             return;
         }
-        if (!fallback.exists()) {
-            Log.i(TAG, "hidden app " + app + " in front, no fallback: keeping the last image");
-            return;
-        }
         try {
-            target.applyPng(fallback.read());
+            byte[] png = fallback.resolve(settings.seeThroughFallbackId());
+            if (png == null) {
+                Log.i(TAG, app + " not shown, no fallback: keeping the last image");
+                return;
+            }
+            target.applyPng(png);
             showingFallback = true;
-            Log.i(TAG, "hidden app " + app + " in front: fallback applied");
+            lastFrameHash = 0;
+            Log.i(TAG, app + " not shown: fallback applied");
         } catch (IOException | RuntimeException e) {
             Log.w(TAG, "Couldn't apply the fallback", e);
         }

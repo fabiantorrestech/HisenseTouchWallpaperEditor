@@ -22,6 +22,8 @@
 
     <!-- Home -->
     <string name="new_wallpaper">New wallpaper</string>
+    <string name="new_from_picture">From a picture</string>
+    <string name="new_see_through">See-through: shows your screen</string>
     <string name="projects">Projects</string>
     <string name="restore_original">Restore original wallpaper</string>
     <string name="settings">Settings</string>
@@ -35,7 +37,7 @@
     <string name="status_replaced">The lock screen wallpaper was changed outside this app.</string>
     <string name="see_through">See-through lock</string>
     <string name="status_see_through_on">See-through lock is on: the lock screen shows your last screen.</string>
-    <string name="status_see_through_needs_service">See-through lock is on, but its accessibility service is off. Open See-through lock to fix it.</string>
+    <string name="status_see_through_needs_service">See-through lock is on, but its accessibility service is off. Open Settings, then See-through lock options, to fix it.</string>
     <string name="other_device_warning">This app was measured on the Hisense Touch Lite. On this device, zones may need dragging into place and Apply may not work. You can still save a PNG.</string>
 
     <!-- Projects -->
@@ -128,6 +130,7 @@
     <string name="advice_contrast_light">%1$s: black text on this dark panel will be hard to read. Try a lighter panel.</string>
     <string name="advice_flipped">%1$s changed from %2$s to %3$s text.</string>
     <string name="advice_no_panel">%1$s: forced %2$s text has no panel behind it, so it may be hard to read. Turn on a zone here.</string>
+    <string name="advice_see_through_auto">%1$s: Automatic text color will change with whatever is on screen. Force black or white for text that always reads.</string>
     <string name="advice_votes">Top vote %1$+d, bottom vote %2$+d.</string>
 
     <!-- Apply -->
@@ -165,12 +168,18 @@
     <string name="see_through_switch">Show my screen on the lock screen</string>
     <string name="open_accessibility">Accessibility</string>
     <string name="allow_all_files">All Files Access</string>
-    <string name="see_through_style_section">Drawn over your screen</string>
-    <string name="see_through_style_none">Nothing: plain screenshot</string>
-    <string name="see_through_style_unmeasured">Zones were measured only on the Hisense Touch Lite, so this device uses the plain screenshot.</string>
     <string name="see_through_fallback_section">Shown while a hidden app is open</string>
-    <string name="see_through_fallback_before">Your wallpaper from before see-through</string>
-    <string name="see_through_fallback_none">Nothing: keep the last screen that isn\'t hidden</string>
+    <string name="see_through_fallback_auto">Automatic: the last picture wallpaper you applied</string>
+    <string name="see_through_fallback_original">Your original wallpaper</string>
+    <string name="see_through_fallback_image">The image you picked</string>
+    <string name="see_through_fallback_pick">Pick an image…</string>
+    <string name="see_through_options">See-through lock options</string>
+    <string name="see_through_using">Using: %1$s</string>
+    <string name="see_through_needs_project">No see-through wallpaper applied yet. Tap Home, then New wallpaper, then See-through, and tap Apply.</string>
+    <string name="see_through_project_name">See-through · %1$s</string>
+    <string name="see_through_picture_turns_off">Applying a picture turns see-through off, so the lock screen stops showing your screen.</string>
+    <string name="see_through_applied">See-through is on. Use your device, then lock it to see your screen with this design.</string>
+    <string name="change_preview">Change preview</string>
     <string name="see_through_on_screen_off">Also capture when the screen turns off (experimental)</string>
     <string name="see_through_probe">Test: write black on screen off, white on screen on (debug only)</string>
     <string name="see_through_privacy">Anyone who picks up your device sees your last screen. Hide apps that show private things.</string>
@@ -186,7 +195,7 @@
     <string name="see_through_service_message">Android only lets accessibility services take screenshots of other apps. On the next screen, open \"Touch Wallpaper see-through lock\" and turn it on.</string>
     <string name="see_through_turned_off">See-through is off. Your fallback wallpaper is back.</string>
     <string name="see_through_turned_off_no_fallback">See-through is off. The lock screen keeps the last screenshot until you apply a wallpaper.</string>
-    <string name="hidden_apps_intro">Hidden apps never appear on the lock screen. While one is open, the fallback wallpaper is shown.</string>
+    <string name="hidden_apps_intro">Hidden apps never appear on the lock screen. While one is open, the hidden-app wallpaper is shown instead. So is any app whose screen comes back black, such as KOReader on some devices.</string>
     <string name="hidden_apps_suggested">%1$d apps may show private things. They\'re listed first.</string>
     <string name="hide_suggested">Hide all suggested</string>
     <string name="loading_apps">Loading apps…</string>
@@ -197,11 +206,6 @@
     <string name="reason_passwords">passwords</string>
     <string name="reason_social">social</string>
     <string name="see_through_apply_title">See-through lock is on</string>
-    <string name="see_through_use_as_style">Draw this over my screen</string>
-    <string name="see_through_use_as_fallback">Show this while a hidden app is open</string>
-    <string name="see_through_turn_off_and_apply">Turn see-through off and apply</string>
-    <string name="see_through_style_set">This project is now drawn over your screen.</string>
-    <string name="see_through_fallback_set">This project is now shown while a hidden app is open.</string>
 
     <!-- Welcome -->
     <string name="welcome_1_title">1. Pick an image</string>

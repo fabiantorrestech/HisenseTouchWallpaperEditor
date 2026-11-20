@@ -39,6 +39,7 @@ The keyguard's vote identifies which image it loaded: all white gives `whiteCoun
 | S5 | Do e-reader page turns trigger a capture? | Stock reader and KOReader: turn a page by tap, swipe and page key; look for `applied` within ~2 s | Record per app |
 | S6 | Memory, and does the service survive? | `adb shell dumpsys meminfo io.github.fabiantorrestech.touchwallpaper.debug` with see-through on and off; reboot, then check it still logs | Within ~15 MB of off; survives reboot |
 | S7 | What do secure screens (FLAG_SECURE) give? | Open a banking app that blocks screenshots; read `dark N%` | Record |
+| S8 | Why is KOReader black? | Open a book in KOReader, then `adb exec-out screencap -p > research/raw/koreader.png` and take a system screenshot (power + volume down). Read `black frame from org.koreader.launcher` in the log | If both are black too, KOReader's screen isn't visible to Android screenshots on this ROM and only the fallback can be shown |
 
 Untick the test box when done, turn see-through off (it puts the fallback back), and compare the ROM file with the backup.
 
@@ -53,6 +54,7 @@ Untick the test box when done, turn see-through off (it puts the fallback back),
 | S5 | | | |
 | S6 | | | |
 | S7 | | | |
+| S8 | Black lock screen in KOReader (owner, 2026-11-20). Now shows the hidden-app wallpaper instead. Cause not confirmed | owner | |
 
 ## Decisions to make from the results
 

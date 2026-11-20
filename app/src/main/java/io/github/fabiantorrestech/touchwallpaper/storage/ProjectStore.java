@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import io.github.fabiantorrestech.touchwallpaper.model.Project;
+import io.github.fabiantorrestech.touchwallpaper.model.ProjectKind;
 import io.github.fabiantorrestech.touchwallpaper.model.SourceImage;
+import io.github.fabiantorrestech.touchwallpaper.render.ReadableDesigner;
 import io.github.fabiantorrestech.touchwallpaper.render.SourceImageLoader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +32,7 @@ public final class ProjectStore {
     private static final int THUMBNAIL_WIDTH = 180;
     private static final int THUMBNAIL_HEIGHT = 360;
     private static final int COPY_BUFFER_SIZE = 65536;
+    private static final String SEE_THROUGH_PREVIEW_ASSET = "see_through_preview.png";
 
     private final File root;
     private final Context context;
@@ -60,6 +63,37 @@ public final class ProjectStore {
             SourceImage source = SourceImageLoader.load(context, sourceFileOf(project));
             project.crop.resetToCover(source);
             source.bitmap.recycle();
+            save(project);
+        } catch (IOException | JSONException | RuntimeException e) {
+            deleteFolder(folder);
+            throw e;
+        }
+        return project;
+    }
+
+    /**
+     * A see-through wallpaper (ADR 6). Its image is a sample page used only as the editor's preview,
+     * and it starts with the any-background readable design.
+     */
+    public Project createSeeThrough(String name) throws IOException, JSONException {
+        Project project = new Project();
+        project.id = UUID.randomUUID().toString();
+        project.kind = ProjectKind.SEE_THROUGH;
+        project.name = name;
+        project.sourceFileName = SOURCE_FILE;
+        File folder = folderOf(project.id);
+        if (!folder.mkdirs()) {
+            throw new IOException("Couldn't create the project folder.");
+        }
+        try {
+            try (InputStream input = context.getAssets().open(SEE_THROUGH_PREVIEW_ASSET);
+                 OutputStream output = new FileOutputStream(new File(folder, project.sourceFileName))) {
+                copy(input, output);
+            }
+            SourceImage source = SourceImageLoader.load(context, sourceFileOf(project));
+            project.crop.resetToCover(source);
+            source.bitmap.recycle();
+            ReadableDesigner.applyForAnyBackground(project, ZoneCatalog.loadZones(context));
             save(project);
         } catch (IOException | JSONException | RuntimeException e) {
             deleteFolder(folder);

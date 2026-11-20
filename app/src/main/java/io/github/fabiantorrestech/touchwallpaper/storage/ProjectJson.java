@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import io.github.fabiantorrestech.touchwallpaper.model.Band;
 import io.github.fabiantorrestech.touchwallpaper.model.CropState;
 import io.github.fabiantorrestech.touchwallpaper.model.Project;
+import io.github.fabiantorrestech.touchwallpaper.model.ProjectKind;
 import io.github.fabiantorrestech.touchwallpaper.model.TextColorChoice;
 import io.github.fabiantorrestech.touchwallpaper.model.ZoneMode;
 import io.github.fabiantorrestech.touchwallpaper.model.ZoneStyle;
@@ -20,9 +21,11 @@ import org.json.JSONObject;
  * - Zones gained "enabled"; the old OFF mode became enabled=false.
  * - The three quote zones became one "quote" zone with a preset.
  * - Crop scale is per original image pixel instead of per loaded pixel.
+ *
+ * Schema 3 adds "kind" (IMAGE or SEE_THROUGH). Older projects are all IMAGE.
  */
 public final class ProjectJson {
-    private static final int SCHEMA_VERSION = 2;
+    private static final int SCHEMA_VERSION = 3;
     private static final String LEGACY_MODE_OFF = "OFF";
     private static final String QUOTE_ZONE_ID = "quote";
     /** Largest area first, because when several were on, the largest one wins. */
@@ -41,6 +44,7 @@ public final class ProjectJson {
         JSONObject root = new JSONObject();
         root.put("schemaVersion", SCHEMA_VERSION);
         root.put("id", project.id);
+        root.put("kind", project.kind.name());
         root.put("name", project.name);
         root.put("updatedAtMillis", project.updatedAtMillis);
         root.put("sourceFileName", project.sourceFileName);
@@ -78,6 +82,7 @@ public final class ProjectJson {
         }
         Project project = new Project();
         project.id = root.getString("id");
+        project.kind = ProjectKind.valueOf(root.optString("kind", ProjectKind.IMAGE.name()));
         project.name = root.getString("name");
         project.updatedAtMillis = root.getLong("updatedAtMillis");
         project.sourceFileName = root.getString("sourceFileName");

@@ -19,6 +19,7 @@ public final class AppSettings {
     private static final String KEY_WELCOME_SHOWN = "welcome_shown";
     private static final String KEY_SEE_THROUGH = "see_through";
     private static final String KEY_SEE_THROUGH_STYLE = "see_through_style";
+    private static final String KEY_SEE_THROUGH_STYLE_STAMP = "see_through_style_stamp";
     private static final String KEY_SEE_THROUGH_FALLBACK = "see_through_fallback";
     private static final String KEY_SEE_THROUGH_HIDDEN_APPS = "see_through_hidden_apps";
     private static final String KEY_SEE_THROUGH_ON_SCREEN_OFF = "see_through_on_screen_off";
@@ -110,7 +111,12 @@ public final class AppSettings {
         preferences.edit().putString(KEY_SEE_THROUGH_STYLE, projectId).apply();
     }
 
-    /** What the fallback wallpaper was made from: a project id, {@code FallbackWallpaper.BEFORE} or {@code NONE}, or null if never chosen. */
+    /** Changes a value the service listens to, so it reloads the style project after edits. */
+    public void touchSeeThroughStyle() {
+        preferences.edit().putLong(KEY_SEE_THROUGH_STYLE_STAMP, System.currentTimeMillis()).apply();
+    }
+
+    /** The hidden-app wallpaper: null for Automatic, {@code FallbackWallpaper.ORIGINAL} or {@code IMAGE}, or a project id. */
     public String seeThroughFallbackId() {
         return preferences.getString(KEY_SEE_THROUGH_FALLBACK, null);
     }

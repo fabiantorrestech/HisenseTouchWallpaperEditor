@@ -9,10 +9,13 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.button.MaterialButton;
 import io.github.fabiantorrestech.touchwallpaper.R;
+import io.github.fabiantorrestech.touchwallpaper.device.DeviceProfiles;
 import io.github.fabiantorrestech.touchwallpaper.eink.EinkRefresher;
 import io.github.fabiantorrestech.touchwallpaper.export.ImageSaver;
 import io.github.fabiantorrestech.touchwallpaper.export.SavedFile;
@@ -29,6 +32,7 @@ import io.github.fabiantorrestech.touchwallpaper.render.RenderResult;
 import io.github.fabiantorrestech.touchwallpaper.render.SourceImageLoader;
 import io.github.fabiantorrestech.touchwallpaper.render.WallpaperRenderer;
 import io.github.fabiantorrestech.touchwallpaper.seethrough.FallbackWallpaper;
+import io.github.fabiantorrestech.touchwallpaper.seethrough.SeeThrough;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectHistory;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectJson;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectStore;
@@ -66,6 +70,9 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     }
 
     private final PngSaveFlow saveFlow = new PngSaveFlow(this, this);
+    /** See-through only: swaps the sample page the zones are designed on. */
+    private final ActivityResultLauncher<String[]> previewPicker =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), this::changePreview);
     private final LockScreenOverlay overlay = new LockScreenOverlay();
 
     private ProjectStore store;
@@ -147,11 +154,19 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     private void bindButtons() {
         findViewById(R.id.open_zones).setOnClickListener(view -> showView(View_.ZONES));
         findViewById(R.id.make_readable).setOnClickListener(view -> makeReadable());
-        findViewById(R.id.back_to_crop).setOnClickListener(view -> {
-            flushAndCommit();
-            startActivity(new Intent(this, CropActivity.class).putExtra(Extras.PROJECT_ID, project.id));
-            finish();
-        });
+        MaterialButton backToCrop = findViewById(R.id.back_to_crop);
+        if (project.isSeeThrough()) {
+            // Nothing to crop: the screenshot always fills the screen. The image is only a preview.
+            backToCrop.setText(R.string.change_preview);
+            backToCrop.setOnClickListener(view -> previewPicker.launch(new String[]{"image/*"}));
+            findViewById(R.id.save_png).setVisibility(View.GONE);
+        } else {
+            backToCrop.setOnClickListener(view -> {
+                flushAndCommit();
+                startActivity(new Intent(this, CropActivity.class).putExtra(Extras.PROJECT_ID, project.id));
+                finish();
+            });
+        }
         findViewById(R.id.undo).setOnClickListener(view -> undo());
         findViewById(R.id.redo).setOnClickListener(view -> redo());
         findViewById(R.id.edit_undo).setOnClickListener(view -> undo());
@@ -459,7 +474,11 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
         Background.run(() -> {
             try {
                 Project designed = ProjectJson.fromCurrentJson(json);
-                ReadableDesigner.apply(designed, source, zones, renderer());
+                if (designed.isSeeThrough()) {
+                    ReadableDesigner.applyForAnyBackground(designed, zones);
+                } else {
+                    ReadableDesigner.apply(designed, source, zones, renderer());
+                }
                 String designedJson = ProjectJson.toJson(designed);
                 runOnUiThread(() -> onDesignReady(designedJson));
             } catch (JSONException | RuntimeException e) {
@@ -513,50 +532,70 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     }
 
     private void applyToLockScreen() {
-        if (settings.seeThroughEnabled()) {
-            askHowToUseWithSeeThrough();
-            return;
-        }
-        applyNow();
-    }
-
-    /** With see-through on, a plain apply would be replaced by the next screenshot, so ask first. */
-    private void askHowToUseWithSeeThrough() {
-        flushAndCommit();
-        String[] choices = {
-                getString(R.string.see_through_use_as_style),
-                getString(R.string.see_through_use_as_fallback),
-                getString(R.string.see_through_turn_off_and_apply)
-        };
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.see_through_apply_title)
-                .setItems(choices, (dialog, which) -> {
-                    if (which == 0) {
-                        settings.setSeeThroughStyleProjectId(project.id);
-                        showMessage(R.string.see_through_style_set);
-                    } else if (which == 1) {
-                        useAsSeeThroughFallback();
-                    } else {
+        if (project.isSeeThrough()) {
+            applySeeThrough();
+        } else if (settings.seeThroughEnabled()) {
+            // A picture would be replaced by the next screenshot, so see-through has to go off.
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.see_through_apply_title)
+                    .setMessage(R.string.see_through_picture_turns_off)
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.apply, (dialog, which) -> {
                         settings.setSeeThroughEnabled(false);
                         applyNow();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+                    })
+                    .show();
+        } else {
+            applyNow();
+        }
     }
 
-    private void useAsSeeThroughFallback() {
-        String json = currentJsonOrNull();
-        if (json == null) {
+    /** Makes this project the see-through lock screen. The service draws it over each screenshot. */
+    private void applySeeThrough() {
+        if (DeviceProfiles.detect(this).needsAllFilesAccess() && !exporter.hasAllFilesAccess()) {
+            askForAllFilesAccess();
             return;
         }
+        flushAndCommit();
         String projectId = project.id;
         Background.run(() -> {
             try {
-                new FallbackWallpaper(this).save(encodeFinished(json));
-                settings.setSeeThroughFallbackId(projectId);
-                runOnUiThread(() -> showMessage(R.string.see_through_fallback_set));
+                SeeThrough.turnOn(this, settings, projectId);
+                runOnUiThread(this::onSeeThroughApplied);
             } catch (IOException | RuntimeException e) {
+                runOnUiThread(() -> showError(e));
+            }
+        });
+    }
+
+    private void onSeeThroughApplied() {
+        if (SeeThrough.isServiceOn(this)) {
+            showMessage(R.string.see_through_applied);
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.see_through_service_title)
+                .setMessage(R.string.see_through_service_message)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.open_settings, (dialog, which) ->
+                        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)))
+                .show();
+    }
+
+    private void changePreview(Uri uri) {
+        if (uri == null) {
+            return;
+        }
+        flushAndCommit();
+        Project target = project;
+        Background.run(() -> {
+            try {
+                SourceImage image = store.replaceSource(target, uri);
+                runOnUiThread(() -> {
+                    source = image;
+                    requestRender();
+                });
+            } catch (IOException | JSONException | RuntimeException e) {
                 runOnUiThread(() -> showError(e));
             }
         });
@@ -586,6 +625,7 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
             try {
                 byte[] png = encodeFinished(json);
                 exporter.apply(png);
+                rememberAsLastNormal(png);
                 saveCopyAfterApply(png, name);
             } catch (IOException | RuntimeException e) {
                 runOnUiThread(() -> {
@@ -594,6 +634,15 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
                 });
             }
         });
+    }
+
+    /** See-through shows this while a hidden app is open, if left on Automatic. */
+    private void rememberAsLastNormal(byte[] png) {
+        try {
+            new FallbackWallpaper(this).saveLastNormal(png);
+        } catch (IOException e) {
+            android.util.Log.w("ZoneEditorActivity", "Couldn't keep the wallpaper for see-through", e);
+        }
     }
 
     /** The wallpaper is already applied here, so failing to save a copy mustn't look like failing to apply. */

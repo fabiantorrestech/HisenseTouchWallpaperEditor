@@ -60,36 +60,11 @@
         </LinearLayout>
 
         <TextView
-            style="@style/SectionTitle"
+            android:id="@+id/style_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/see_through_style_section" />
-
-        <LinearLayout style="@style/ButtonRow">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/style_previous"
-                style="@style/StepButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:text="@string/nudge_left" />
-
-            <TextView
-                android:id="@+id/style_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:maxLines="2"
-                android:paddingHorizontal="@dimen/gap_panel" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/style_next"
-                style="@style/StepButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:text="@string/nudge_right" />
-        </LinearLayout>
+            android:layout_marginTop="@dimen/gap_panel"
+            android:textSize="14sp" />
 
         <TextView
             style="@style/SectionTitle"
@@ -122,6 +97,13 @@
                 android:layout_height="48dp"
                 android:text="@string/nudge_right" />
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fallback_pick_image"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="@dimen/gap_button"
+            android:text="@string/see_through_fallback_pick" />
 
         <CheckBox
             android:id="@+id/see_through_on_screen_off"

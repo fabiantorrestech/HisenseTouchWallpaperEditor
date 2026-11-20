@@ -43,6 +43,8 @@ public final class SettingsActivity extends BaseActivity {
             settings.setExportFolder(null, null);
             showExportFolder();
         });
+        findViewById(R.id.see_through_options).setOnClickListener(view ->
+                startActivity(new Intent(this, SeeThroughActivity.class)));
         findViewById(R.id.back_up).setOnClickListener(view -> backupTarget.launch(BACKUP_FILE_NAME));
         findViewById(R.id.restore_projects).setOnClickListener(view -> backupSource.launch(new String[]{ZIP_TYPE}));
         showExportFolder();

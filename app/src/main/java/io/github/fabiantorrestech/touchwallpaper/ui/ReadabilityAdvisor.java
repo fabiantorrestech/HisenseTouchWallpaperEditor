@@ -50,6 +50,14 @@ final class ReadabilityAdvisor {
             lines.add(context.getString(R.string.advice_band, itemsIn(band), result.predictedTextColor(band).label));
         }
         lines.addAll(flipMessages);
+        if (project.isSeeThrough()) {
+            for (Band band : Band.values()) {
+                if (project.textColorChoices.get(band) == TextColorChoice.AUTO) {
+                    // The vote here is from the sample page; each screenshot votes again.
+                    lines.add(context.getString(R.string.advice_see_through_auto, itemsIn(band)));
+                }
+            }
+        }
         for (ZoneDefinition zone : zones) {
             addContrastLine(lines, zone, project, result);
         }

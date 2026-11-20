@@ -60,6 +60,12 @@ public final class WallpaperExporter {
         return romFile.exists() ? readAll(romFile) : null;
     }
 
+    /** The wallpaper from before this app first changed it, or null if there's no backup. */
+    public byte[] readOriginalBackup() throws IOException {
+        File backup = backupFile();
+        return backup.exists() ? readAll(backup) : null;
+    }
+
     public boolean hasOriginalBackup() {
         return backupFile().exists();
     }
