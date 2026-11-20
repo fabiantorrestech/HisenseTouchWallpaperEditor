@@ -50,6 +50,15 @@
         android:textSize="18sp" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/see_through"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginHorizontal="@dimen/gap_button"
+        android:layout_marginTop="@dimen/gap_section"
+        android:text="@string/see_through"
+        android:textSize="18sp" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/restore_original"
         android:layout_width="match_parent"
         android:layout_height="56dp"

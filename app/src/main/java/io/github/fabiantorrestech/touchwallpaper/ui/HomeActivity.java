@@ -10,16 +10,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import io.github.fabiantorrestech.touchwallpaper.R;
+import io.github.fabiantorrestech.touchwallpaper.device.DeviceProfiles;
 import io.github.fabiantorrestech.touchwallpaper.export.WallpaperExporter;
 import io.github.fabiantorrestech.touchwallpaper.model.Project;
+import io.github.fabiantorrestech.touchwallpaper.seethrough.SeeThrough;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectStore;
 import java.io.IOException;
 import org.json.JSONException;
 
 /** The app's front door. Every other screen has a Home button that comes back here. */
 public final class HomeActivity extends BaseActivity {
-    private static final String MEASURED_MODEL = "HITV205N";
-
     private WallpaperExporter exporter;
     private TextView status;
     private View restoreButton;
@@ -36,10 +36,11 @@ public final class HomeActivity extends BaseActivity {
         restoreButton = findViewById(R.id.restore_original);
         findViewById(R.id.new_wallpaper).setOnClickListener(view -> imagePicker.launch(new String[]{"image/*"}));
         findViewById(R.id.projects).setOnClickListener(view -> startActivity(new Intent(this, ProjectListActivity.class)));
+        findViewById(R.id.see_through).setOnClickListener(view -> startActivity(new Intent(this, SeeThroughActivity.class)));
         findViewById(R.id.settings).setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
         findViewById(R.id.help).setOnClickListener(view -> startActivity(new Intent(this, WelcomeActivity.class)));
         restoreButton.setOnClickListener(view -> confirmRestore());
-        findViewById(R.id.device_warning).setVisibility(MEASURED_MODEL.equals(Build.MODEL) ? View.GONE : View.VISIBLE);
+        findViewById(R.id.device_warning).setVisibility(DeviceProfiles.HISENSE_TOUCH_LITE_MODEL.equals(Build.MODEL) ? View.GONE : View.VISIBLE);
         ((TextView) findViewById(R.id.device_warning)).setText(R.string.other_device_warning);
         if (!settings.welcomeShown()) {
             settings.setWelcomeShown();
@@ -56,6 +57,14 @@ public final class HomeActivity extends BaseActivity {
 
     private void updateStatus() {
         int message;
+        if (settings.seeThroughEnabled()) {
+            // Every capture rewrites the wallpaper, so the apply status below would only flicker.
+            status.setText(SeeThrough.isServiceOn(this)
+                    ? R.string.status_see_through_on
+                    : R.string.status_see_through_needs_service);
+            status.setVisibility(View.VISIBLE);
+            return;
+        }
         switch (exporter.loadStatus()) {
             case WAITING_FOR_LOCK:
                 message = R.string.status_waiting;

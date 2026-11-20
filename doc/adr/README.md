@@ -5,6 +5,8 @@
 
 | ADR | Title | Status | Supersedes |
 | --- | --- | --- | --- |
+| [0007](0007-pluggable-lock-screen-targets-per-device-profile.md) | Pluggable lock screen targets per device profile | Accepted | — |
+| [0006](0006-capture-the-screen-with-an-accessibility-service.md) | Capture the screen with an accessibility service | Accepted | — |
 | [0005](0005-use-the-roms-private-refresh-with-a-flash-fallback.md) | Use the ROM's private refresh with a flash fallback | Accepted | — |
 | [0004](0004-apply-by-replacing-the-rom-wallpaper-file.md) | Apply by replacing the ROM wallpaper file | Accepted | — |
 | [0003](0003-store-projects-as-json-directories.md) | Store projects as JSON directories | Accepted | — |

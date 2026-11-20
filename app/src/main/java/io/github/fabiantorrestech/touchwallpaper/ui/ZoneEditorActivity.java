@@ -28,6 +28,7 @@ import io.github.fabiantorrestech.touchwallpaper.render.ReadableDesigner;
 import io.github.fabiantorrestech.touchwallpaper.render.RenderResult;
 import io.github.fabiantorrestech.touchwallpaper.render.SourceImageLoader;
 import io.github.fabiantorrestech.touchwallpaper.render.WallpaperRenderer;
+import io.github.fabiantorrestech.touchwallpaper.seethrough.FallbackWallpaper;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectHistory;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectJson;
 import io.github.fabiantorrestech.touchwallpaper.storage.ProjectStore;
@@ -512,6 +513,63 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     }
 
     private void applyToLockScreen() {
+        if (settings.seeThroughEnabled()) {
+            askHowToUseWithSeeThrough();
+            return;
+        }
+        applyNow();
+    }
+
+    /** With see-through on, a plain apply would be replaced by the next screenshot, so ask first. */
+    private void askHowToUseWithSeeThrough() {
+        flushAndCommit();
+        String[] choices = {
+                getString(R.string.see_through_use_as_style),
+                getString(R.string.see_through_use_as_fallback),
+                getString(R.string.see_through_turn_off_and_apply)
+        };
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.see_through_apply_title)
+                .setItems(choices, (dialog, which) -> {
+                    if (which == 0) {
+                        settings.setSeeThroughStyleProjectId(project.id);
+                        showMessage(R.string.see_through_style_set);
+                    } else if (which == 1) {
+                        useAsSeeThroughFallback();
+                    } else {
+                        settings.setSeeThroughEnabled(false);
+                        applyNow();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void useAsSeeThroughFallback() {
+        String json = currentJsonOrNull();
+        if (json == null) {
+            return;
+        }
+        String projectId = project.id;
+        Background.run(() -> {
+            try {
+                new FallbackWallpaper(this).save(encodeFinished(json));
+                settings.setSeeThroughFallbackId(projectId);
+                runOnUiThread(() -> showMessage(R.string.see_through_fallback_set));
+            } catch (IOException | RuntimeException e) {
+                runOnUiThread(() -> showError(e));
+            }
+        });
+    }
+
+    private void showMessage(@StringRes int message) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    private void applyNow() {
         if (!exporter.hasAllFilesAccess()) {
             askForAllFilesAccess();
             return;

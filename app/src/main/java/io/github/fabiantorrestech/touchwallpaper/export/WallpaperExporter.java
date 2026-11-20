@@ -55,6 +55,11 @@ public final class WallpaperExporter {
         replaceRomFile(png);
     }
 
+    /** The wallpaper the lock screen reads right now, or null if there isn't one. Needs All Files Access. */
+    public byte[] readCurrent() throws IOException {
+        return romFile.exists() ? readAll(romFile) : null;
+    }
+
     public boolean hasOriginalBackup() {
         return backupFile().exists();
     }

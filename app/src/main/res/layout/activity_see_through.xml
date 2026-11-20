@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Two pages instead of scrolling (e-ink): Setup, and the paged Hidden apps list. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/bar_top" />
+
+    <LinearLayout
+        style="@style/ButtonRow"
+        android:paddingHorizontal="@dimen/gap_panel">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tab_setup"
+            style="@style/RowButton"
+            android:text="@string/tab_setup" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tab_apps"
+            style="@style/RowButton"
+            android:text="@string/tab_hidden_apps" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/setup_page"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp">
+
+        <TextView
+            android:id="@+id/see_through_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_panel"
+            android:textSize="14sp" />
+
+        <CheckBox
+            android:id="@+id/see_through_enabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_panel"
+            android:text="@string/see_through_switch"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_accessibility"
+                style="@style/RowButton"
+                android:text="@string/open_accessibility" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/allow_all_files"
+                style="@style/RowButton"
+                android:text="@string/allow_all_files" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/see_through_style_section" />
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/style_previous"
+                style="@style/StepButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="@string/nudge_left" />
+
+            <TextView
+                android:id="@+id/style_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="2"
+                android:paddingHorizontal="@dimen/gap_panel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/style_next"
+                style="@style/StepButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="@string/nudge_right" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/SectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/see_through_fallback_section" />
+
+        <LinearLayout style="@style/ButtonRow">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fallback_previous"
+                style="@style/StepButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="@string/nudge_left" />
+
+            <TextView
+                android:id="@+id/fallback_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:maxLines="2"
+                android:paddingHorizontal="@dimen/gap_panel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fallback_next"
+                style="@style/StepButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="@string/nudge_right" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/see_through_on_screen_off"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_section"
+            android:text="@string/see_through_on_screen_off" />
+
+        <CheckBox
+            android:id="@+id/see_through_probe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/see_through_probe"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_section"
+            android:text="@string/see_through_privacy"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/apps_page"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/apps_intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_panel"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/hide_suggested"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="@dimen/gap_button"
+            android:text="@string/hide_suggested" />
+
+        <LinearLayout
+            android:id="@+id/app_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/gap_panel" />
+
+        <LinearLayout
+            android:id="@+id/pager"
+            style="@style/ButtonRow"
+            android:padding="@dimen/gap_panel">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/page_previous"
+                style="@style/RowButton"
+                android:text="@string/previous_page" />
+
+            <TextView
+                android:id="@+id/page_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/page_next"
+                style="@style/RowButton"
+                android:text="@string/next_page" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
