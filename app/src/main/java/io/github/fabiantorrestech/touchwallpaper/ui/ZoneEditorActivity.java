@@ -46,10 +46,10 @@ import org.json.JSONException;
  * image buffers are shared instead of reallocated when moving between views.
  */
 public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvasView.Listener,
-        ZonesListPanel.Host, EditZonePanel.Host, PngSaveFlow.Listener {
+        ZonesListPanel.Host, EditZonePanel.Host, BackgroundTonePanel.Host, PngSaveFlow.Listener {
 
     private enum View_ {
-        PREVIEW, FULL, ZONES, EDIT, RESIZE
+        PREVIEW, FULL, ZONES, EDIT, RESIZE, TONE
     }
 
     private enum PreviewText {
@@ -81,6 +81,8 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     private ZoneCanvasView canvas;
     private ZonesListPanel zonesPanel;
     private EditZonePanel editPanel;
+    /** See-through projects only; null otherwise. */
+    private BackgroundTonePanel tonePanel;
     private TextView previewAdvice;
     private TextView editAdvice;
     private MaterialButton applyButton;
@@ -145,6 +147,9 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
         canvas.setListener(this);
         zonesPanel = new ZonesListPanel(this, this);
         editPanel = new EditZonePanel(this, this);
+        if (project.isSeeThrough()) {
+            tonePanel = new BackgroundTonePanel(this, this);
+        }
         bindButtons();
         showView(View_.PREVIEW);
         updateUndoButtons();
@@ -160,6 +165,10 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
             backToCrop.setText(R.string.change_preview);
             backToCrop.setOnClickListener(view -> previewPicker.launch(new String[]{"image/*"}));
             findViewById(R.id.save_png).setVisibility(View.GONE);
+            View openTone = findViewById(R.id.open_tone);
+            openTone.setVisibility(View.VISIBLE);
+            openTone.setOnClickListener(view -> showView(View_.TONE));
+            findViewById(R.id.tone_done).setOnClickListener(view -> showView(View_.PREVIEW));
         } else {
             backToCrop.setOnClickListener(view -> {
                 flushAndCommit();
@@ -192,17 +201,19 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
 
     private void showView(View_ next) {
         View_ previous = currentView;
-        if (editPanel != null) {
-            editPanel.flush();
-        }
+        flushPanels();
         currentView = next;
         setPanelVisible(R.id.panel_preview, next == View_.PREVIEW);
         setPanelVisible(R.id.panel_full, next == View_.FULL);
         setPanelVisible(R.id.panel_zones, next == View_.ZONES);
         setPanelVisible(R.id.panel_edit, next == View_.EDIT);
         setPanelVisible(R.id.panel_resize, next == View_.RESIZE);
+        setPanelVisible(R.id.panel_tone, next == View_.TONE);
         if (next == View_.ZONES) {
             zonesPanel.show();
+        }
+        if (next == View_.TONE) {
+            tonePanel.show();
         }
         if (next == View_.EDIT) {
             editPanel.rebuild();
@@ -315,11 +326,19 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     }
 
     private void flushAndCommit() {
+        flushPanels();
+        if (history != null) {
+            commit();
+        }
+    }
+
+    /** Reports stepper changes still waiting for their delay. */
+    private void flushPanels() {
         if (editPanel != null) {
             editPanel.flush();
         }
-        if (history != null) {
-            commit();
+        if (tonePanel != null) {
+            tonePanel.flush();
         }
     }
 
@@ -333,7 +352,7 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     }
 
     private void undo() {
-        editPanel.flush();
+        flushPanels();
         if (history.canUndo()) {
             try {
                 showRestored(history.undo(project));
@@ -344,7 +363,7 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
     }
 
     private void redo() {
-        editPanel.flush();
+        flushPanels();
         if (history.canRedo()) {
             try {
                 showRestored(history.redo(project));
@@ -366,6 +385,8 @@ public final class ZoneEditorActivity extends BaseActivity implements ZoneCanvas
             editPanel.rebuild();
         } else if (currentView == View_.ZONES) {
             zonesPanel.show();
+        } else if (currentView == View_.TONE) {
+            tonePanel.show();
         }
         showSelection();
         requestRender();

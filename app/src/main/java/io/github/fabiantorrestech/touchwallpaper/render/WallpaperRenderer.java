@@ -62,6 +62,10 @@ public final class WallpaperRenderer {
         canvas.drawColor(Color.rgb(gray, gray, gray));
         project.crop.writeMatrix(matrix, source);
         canvas.drawBitmap(source.bitmap, matrix, imagePaint);
+        // Under the zones and before text forcing, so zones stay crisp and forced colors still hold.
+        if (!project.tone.isOff()) {
+            canvas.drawColor(project.tone.color());
+        }
     }
 
     private void drawZone(ZoneDefinition zone, ZoneStyle style) {

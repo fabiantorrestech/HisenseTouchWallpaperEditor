@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import io.github.fabiantorrestech.touchwallpaper.model.BackgroundTone;
 import io.github.fabiantorrestech.touchwallpaper.model.Project;
 import io.github.fabiantorrestech.touchwallpaper.model.ProjectKind;
 import io.github.fabiantorrestech.touchwallpaper.model.SourceImage;
@@ -80,6 +81,8 @@ public final class ProjectStore {
         project.id = UUID.randomUUID().toString();
         project.kind = ProjectKind.SEE_THROUGH;
         project.name = name;
+        project.tone.mode = BackgroundTone.Mode.DARKEN;
+        project.tone.percent = BackgroundTone.DEFAULT_PERCENT;
         project.sourceFileName = SOURCE_FILE;
         File folder = folderOf(project.id);
         if (!folder.mkdirs()) {

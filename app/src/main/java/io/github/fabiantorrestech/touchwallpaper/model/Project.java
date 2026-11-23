@@ -16,6 +16,8 @@ public final class Project {
     public CropState crop = new CropState();
     public final Map<String, ZoneStyle> zoneStyles = new HashMap<>();
     public final Map<Band, TextColorChoice> textColorChoices = new EnumMap<>(Band.class);
+    /** See-through only: darkens or lightens the screenshot under the zones. */
+    public final BackgroundTone tone = new BackgroundTone();
 
     /** The last PNG saved from this project, or nulls if there isn't one. */
     public String lastSavedUri;

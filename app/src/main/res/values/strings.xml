@@ -180,6 +180,13 @@
     <string name="see_through_picture_turns_off">Applying a picture turns see-through off, so the lock screen stops showing your screen.</string>
     <string name="see_through_applied">See-through is on. Use your device, then lock it to see your screen with this design.</string>
     <string name="change_preview">Change preview</string>
+    <string name="tone_button">Background</string>
+    <string name="tone_title">Background</string>
+    <string name="tone_hint">Darken or lighten your screen behind the lock screen text and zones.</string>
+    <string name="tone_off">Off</string>
+    <string name="tone_darken">Darken</string>
+    <string name="tone_lighten">Lighten</string>
+    <string name="tone_amount">Amount</string>
     <string name="see_through_on_screen_off">Also capture when the screen turns off (experimental)</string>
     <string name="see_through_probe">Test: write black on screen off, white on screen on (debug only)</string>
     <string name="see_through_privacy">Anyone who picks up your device sees your last screen. Hide apps that show private things.</string>

@@ -74,6 +74,13 @@
                 style="@style/RowButton"
                 android:text="@string/save_png" />
 
+            <!-- See-through only, in place of Save PNG. -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_tone"
+                style="@style/RowButton"
+                android:text="@string/tone_button"
+                android:visibility="gone" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/apply"
                 style="@style/RowButton"
@@ -276,5 +283,75 @@
             android:layout_marginTop="@dimen/gap_button"
             android:layout_weight="1"
             android:orientation="vertical" />
+    </LinearLayout>
+
+    <!-- Background (see-through only): darken or lighten the screenshot under the zones. -->
+    <LinearLayout
+        android:id="@+id/panel_tone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.15"
+        android:orientation="vertical"
+        android:padding="@dimen/gap_panel"
+        android:visibility="gone">
+
+        <LinearLayout
+            style="@style/ButtonRow"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:paddingHorizontal="@dimen/gap_button"
+                android:text="@string/tone_title"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tone_done"
+                style="@style/RowButton"
+                android:text="@string/done" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/gap_button"
+            android:text="@string/tone_hint"
+            android:textSize="13sp" />
+
+        <RadioGroup
+            android:id="@+id/tone_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/gap_button"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/tone_off"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tone_off" />
+
+            <RadioButton
+                android:id="@+id/tone_darken"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tone_darken" />
+
+            <RadioButton
+                android:id="@+id/tone_lighten"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tone_lighten" />
+        </RadioGroup>
+
+        <FrameLayout
+            android:id="@+id/tone_amount_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>

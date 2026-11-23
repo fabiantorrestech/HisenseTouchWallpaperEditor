@@ -1,6 +1,7 @@
 package io.github.fabiantorrestech.touchwallpaper.storage;
 
 import android.graphics.Rect;
+import io.github.fabiantorrestech.touchwallpaper.model.BackgroundTone;
 import io.github.fabiantorrestech.touchwallpaper.model.Band;
 import io.github.fabiantorrestech.touchwallpaper.model.CropState;
 import io.github.fabiantorrestech.touchwallpaper.model.Project;
@@ -23,9 +24,11 @@ import org.json.JSONObject;
  * - Crop scale is per original image pixel instead of per loaded pixel.
  *
  * Schema 3 adds "kind" (IMAGE or SEE_THROUGH). Older projects are all IMAGE.
+ *
+ * Schema 4 adds "backgroundTone" (mode OFF, DARKEN or LIGHTEN, and a percent). Older projects are OFF.
  */
 public final class ProjectJson {
-    private static final int SCHEMA_VERSION = 3;
+    private static final int SCHEMA_VERSION = 4;
     private static final String LEGACY_MODE_OFF = "OFF";
     private static final String QUOTE_ZONE_ID = "quote";
     /** Largest area first, because when several were on, the largest one wins. */
@@ -66,6 +69,11 @@ public final class ProjectJson {
             textColors.put(band.name(), project.textColorChoices.get(band).name());
         }
         root.put("textColors", textColors);
+
+        JSONObject tone = new JSONObject();
+        tone.put("mode", project.tone.mode.name());
+        tone.put("percent", project.tone.percent);
+        root.put("backgroundTone", tone);
         return root.toString(2);
     }
 
@@ -101,6 +109,12 @@ public final class ProjectJson {
         JSONObject textColors = root.getJSONObject("textColors");
         for (Band band : Band.values()) {
             project.textColorChoices.put(band, TextColorChoice.valueOf(textColors.getString(band.name())));
+        }
+        // Schema 4. Older projects keep the default: OFF.
+        JSONObject tone = root.optJSONObject("backgroundTone");
+        if (tone != null) {
+            project.tone.mode = BackgroundTone.Mode.valueOf(tone.getString("mode"));
+            project.tone.percent = tone.getInt("percent");
         }
         if (version < 2) {
             migrateQuoteZones(project);
