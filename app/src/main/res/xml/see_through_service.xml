@@ -8,4 +8,4 @@
     android:canRetrieveWindowContent="true"
     android:canTakeScreenshot="true"
     android:description="@string/see_through_service_description"
-    android:notificationTimeout="300" />
+    android:notificationTimeout="100" />

@@ -1,6 +1,6 @@
 # See-through Lock Spike (HITV205N)
 
-Status: **not run yet.** Fill in the results tables, then decide whether "capture on screen off" can be turned on by default (ADR 6).
+Status: **partly run** (S2–S5 on 2026-11-23, `KEYCODE_SLEEP` only). Fill in the rest of the results table, then decide whether "capture on screen off" can be turned on by default (ADR 6).
 
 Evidence labels as in `lockscreen-zones.md`: **tested**, **code**, **estimate**.
 
@@ -48,10 +48,10 @@ Untick the test box when done, turn see-through off (it puts the fallback back),
 | # | Result | Evidence | Notes |
 |---|---|---|---|
 | S1 | | | |
-| S2 | | | |
-| S3 | | | |
-| S4 | | | |
-| S5 | | | |
+| S2 | Not needed: by the time `ACTION_SCREEN_OFF` arrives, the keyguard has already read the file | tested 2026-11-23, `KEYCODE_SLEEP` only | Screenshots taken in the ~1 s between the key and the broadcast come back black, with the app or `null` in front. Until fixed, these were read as a hidden app and put the fallback up |
+| S3 | **Fails.** The keyguard logs `FW, time` (its file check) at once on the key; the service logs `screen off` about 1.2 s later. A file written on screen off is only seen at the next lock | tested 2026-11-23, log timestamps, `KEYCODE_SLEEP` only | Power button not tested. "Capture on screen off" is now debug-only |
+| S4 | Mihon page (≈800–960 KB): capture 30–70 ms, scan 25–65, compose 20, encode **450–490 → 145–175 ms** with `FastPngEncoder`, write 35–140 ms. Tap → file written: **≈1.9 s → ≈0.9 s** | tested 2026-11-23 | Quiet 1200 → 500 ms, `notificationTimeout` 300 → 100 ms, plus one follow-up capture 1.5 s after each capture |
+| S5 | Mihon (`app.mihon`): tap page turns are captured. Mihon turns the page 0.3–0.45 s after the tap (most likely waiting for a double tap), so a 300 ms quiet captured the old page and lost the 1.1 s screenshot slot | tested 2026-11-23 | With 500 ms: lock shows the new page when power comes ≳0.85 s after the tap; at 0.55–0.75 s the write lands 50–240 ms too late and that one lock shows the previous page |
 | S6 | | | |
 | S7 | | | |
 | S8 | Black lock screen in KOReader (owner, 2026-11-20). Now shows the hidden-app wallpaper instead. Cause not confirmed | owner | |

@@ -10,8 +10,9 @@ public class CaptureSchedulerTest {
     private static final long QUIET = 1200;
     private static final long MAX_WAIT = 10000;
     private static final long INTERVAL = 1100;
+    private static final long FOLLOW_UP = 1500;
 
-    private final CaptureScheduler scheduler = new CaptureScheduler(QUIET, MAX_WAIT, INTERVAL);
+    private final CaptureScheduler scheduler = new CaptureScheduler(QUIET, MAX_WAIT, INTERVAL, FOLLOW_UP);
 
     @Test
     public void nothingIsDueWithoutActivity() {

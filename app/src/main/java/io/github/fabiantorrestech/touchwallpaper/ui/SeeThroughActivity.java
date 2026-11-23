@@ -110,8 +110,10 @@ public final class SeeThroughActivity extends BaseActivity {
         findViewById(R.id.fallback_next).setOnClickListener(view -> stepFallback(1));
         findViewById(R.id.fallback_pick_image).setOnClickListener(view -> fallbackImagePicker.launch(new String[]{"image/*"}));
 
-        bindCheck(R.id.see_through_on_screen_off, settings.seeThroughOnScreenOff(), settings::setSeeThroughOnScreenOff);
         boolean debuggable = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        // Measured too late on this ROM (spike S2, S3), so it's only offered for testing.
+        findViewById(R.id.see_through_on_screen_off).setVisibility(debuggable ? View.VISIBLE : View.GONE);
+        bindCheck(R.id.see_through_on_screen_off, settings.seeThroughOnScreenOff(), settings::setSeeThroughOnScreenOff);
         findViewById(R.id.see_through_probe).setVisibility(debuggable ? View.VISIBLE : View.GONE);
         bindCheck(R.id.see_through_probe, settings.seeThroughProbe(), settings::setSeeThroughProbe);
 

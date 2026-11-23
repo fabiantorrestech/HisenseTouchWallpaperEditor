@@ -13,6 +13,7 @@ import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,8 +49,14 @@ public final class SeeThroughService extends AccessibilityService
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     static final String TAG = "SeeThrough";
 
-    /** How long the screen must stay still before it's captured. Tune from the spike's timings. */
-    private static final long QUIET_MILLIS = 1200;
+    /**
+     * How long the screen must stay still before it's captured. Short, because the keyguard reads
+     * the image the moment power is pressed (spike S2, S3): a tap, then power, must already find
+     * the new page in the file.
+     */
+    private static final long QUIET_MILLIS = 500;
+    /** A second look this long after each capture, for pages that were still loading. */
+    private static final long FOLLOW_UP_MILLIS = 1500;
     /** Screens that never settle, such as animations, are captured at most this often. */
     private static final long MAX_WAIT_MILLIS = 10000;
     /** Android 11 allows one accessibility screenshot per second; a little slack avoids refusals. */
@@ -60,7 +67,7 @@ public final class SeeThroughService extends AccessibilityService
     private static final int DARK_LEVEL = 16;
     private static final int BLACK_FRAME_PERCENT = 99;
 
-    private final CaptureScheduler scheduler = new CaptureScheduler(QUIET_MILLIS, MAX_WAIT_MILLIS, MIN_INTERVAL_MILLIS);
+    private final CaptureScheduler scheduler = new CaptureScheduler(QUIET_MILLIS, MAX_WAIT_MILLIS, MIN_INTERVAL_MILLIS, FOLLOW_UP_MILLIS);
     private final Runnable normalCapture = () -> captureIfDue(false);
     private final Runnable urgentCapture = () -> captureIfDue(true);
     private final Runnable markActivity = this::onScreenActivity;
@@ -70,6 +77,7 @@ public final class SeeThroughService extends AccessibilityService
 
     private final Handler main = new Handler(Looper.getMainLooper());
     private AppSettings settings;
+    private PowerManager power;
     private HandlerThread thread;
     private Handler worker;
     private BroadcastReceiver screenReceiver;
@@ -94,6 +102,7 @@ public final class SeeThroughService extends AccessibilityService
     @Override
     protected void onServiceConnected() {
         settings = new AppSettings(this);
+        power = getSystemService(PowerManager.class);
         thread = new HandlerThread("see-through");
         thread.start();
         worker = new Handler(thread.getLooper());
@@ -179,8 +188,11 @@ public final class SeeThroughService extends AccessibilityService
         boolean wasEnabled = enabled;
         enabled = settings.seeThroughEnabled();
         hiddenApps = settings.seeThroughHiddenApps();
-        captureOnScreenOff = settings.seeThroughOnScreenOff();
-        probe = settings.seeThroughProbe() && (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        boolean debuggable = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+        // Spike S2, S3: screen off arrives after the keyguard has read the image, so this is
+        // only kept for measuring in debug builds.
+        captureOnScreenOff = settings.seeThroughOnScreenOff() && debuggable;
+        probe = settings.seeThroughProbe() && debuggable;
         style = loadStyle(settings.seeThroughStyleProjectId());
         // The style may have changed, so the next frame is written even if the screen hasn't.
         lastFrameHash = 0;
@@ -317,6 +329,10 @@ public final class SeeThroughService extends AccessibilityService
                 if (urgent) {
                     // The display was already off: writing this would put a black lock screen up.
                     Log.i(TAG, "skipped: black frame after screen off");
+                } else if (!power.isInteractive()) {
+                    // Power was just pressed: screenshots go black before ACTION_SCREEN_OFF
+                    // arrives. This isn't a hidden app, so the fallback mustn't replace the page.
+                    Log.i(TAG, "skipped: black frame while going to sleep");
                 } else {
                     // Some apps, such as KOReader on this device, come back black: their screen
                     // isn't visible to Android screenshots. Treat them like a hidden app.
@@ -325,8 +341,9 @@ public final class SeeThroughService extends AccessibilityService
                 }
                 return;
             }
+            String label = urgent ? "screen-off " : scheduler.isFollowUp() ? "follow-up " : "";
             if (hash == lastFrameHash && !showingFallback) {
-                Log.i(TAG, "skipped: screen unchanged");
+                Log.i(TAG, label + "skipped: screen unchanged");
                 return;
             }
             // Switched off while capturing: don't overwrite the fallback the UI just put back.
@@ -339,7 +356,7 @@ public final class SeeThroughService extends AccessibilityService
             target.apply(wallpaper);
             lastFrameHash = hash;
             showingFallback = false;
-            Log.i(TAG, (urgent ? "screen-off " : "") + "applied: capture " + (captured - requestedAt)
+            Log.i(TAG, label + "applied: capture " + (captured - requestedAt)
                     + " ms, scan " + (scanned - captured) + " ms, compose " + (composed - scanned)
                     + " ms, apply " + (SystemClock.uptimeMillis() - composed) + " ms, dark " + darkPercent + "%");
         } catch (IOException | JSONException | RuntimeException e) {
